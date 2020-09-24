@@ -10,14 +10,59 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:charset-detector.helloWorld"
+		"onCommand:charset-detector.enableHightlight"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "charset-detector.helloWorld",
-				"title": "Hello World"
+				"command": "charset-detector.enableHightlight",
+				"title": "Highlight lines with Chinese words"
+			},
+			{
+				"command": "charset-detector.disableHightlight",
+				"title": "Disable highlight of lines with Chinese words"
+			}
+		],
+		"keybindings": [
+			{
+				"command": "charset-detector.enableHightlight",
+				"key": "ctrl+shift+f",
+				"mac": "cmd+shift+f",
+				"when": "editorTextFocus"
+			},
+			{
+				"command": "charset-detector.disableHightlight",
+				"key": "ctrl+shift+e",
+				"mac": "cmd+shift+e",
+				"when": "editorTextFocus"
+			}
+		],
+		"configuration": [
+			{
+				"title": "Charset-detector",
+				"properties": {
+					"charset-detector.extensions": {
+						"type": "string",
+						"default": "*",
+						"description": "File extensions to detect."
+					}
+				},
+				"charset-detector.ignore": {
+					"type": "array",
+					"default": [],
+					"description": "Files or folders to ignore."
+				},
+				"charset-detector.libEn": {
+					"type": "string",
+					"default": "",
+					"description": ""
+				},
+				"charset-detector.libZh": {
+					"type": "string",
+					"default": "",
+					"description": ""
+				}
 			}
 		]
 	},
