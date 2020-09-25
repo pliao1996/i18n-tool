@@ -22,6 +22,10 @@
 			{
 				"command": "charset-detector.disableHightlight",
 				"title": "Disable highlight of lines with Chinese words"
+			},
+			{
+				"command": "charset-detector.detectWorkspace",
+				"title": "Find Chinese words in workspace"
 			}
 		],
 		"keybindings": [
@@ -42,26 +46,31 @@
 			{
 				"title": "Charset-detector",
 				"properties": {
-					"charset-detector.extensions": {
+					"charset-detector.directory": {
 						"type": "string",
-						"default": "*",
-						"description": "File extensions to detect."
+						"default": "",
+						"description": "Choose a root directory to detect."
+					},
+					"charset-detector.extensions": {
+						"type": "array",
+						"default": [],
+						"description": "Specify which file to detect."
+					},
+					"charset-detector.ignore": {
+						"type": "array",
+						"default": [],
+						"description": "Files or folders to ignore."
+					},
+					"charset-detector.wordlib.en": {
+						"type": "string",
+						"default": "",
+						"description": ""
+					},
+					"charset-detector.wordlib.zh": {
+						"type": "string",
+						"default": "",
+						"description": ""
 					}
-				},
-				"charset-detector.ignore": {
-					"type": "array",
-					"default": [],
-					"description": "Files or folders to ignore."
-				},
-				"charset-detector.libEn": {
-					"type": "string",
-					"default": "",
-					"description": ""
-				},
-				"charset-detector.libZh": {
-					"type": "string",
-					"default": "",
-					"description": ""
 				}
 			}
 		]
