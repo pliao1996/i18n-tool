@@ -6,17 +6,3 @@ export const textEditorDecorationTypeHighlight = vscode.window.createTextEditorD
   backgroundColor: new vscode.ThemeColor('editor.selectionBackground'),
   overviewRulerColor: 'yellow'
 });
-
-export interface ExtensionConfig {
-  extensions: string[];
-  ignore: string[];
-  wordlib: {
-    en: string;
-    zh: string;
-  }
-}
-
-export interface DocumentDetectResult {
-  ranges: vscode.Range[];
-  texts: string[];
-}

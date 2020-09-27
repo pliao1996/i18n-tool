@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
-import { DocumentDetectResult, ExtensionConfig, textEditorDecorationTypeHighlight } from './config';
+import { textEditorDecorationTypeHighlight } from './config';
 import { CHINESE_WORDS_REGEX } from './constants';
+import { DocumentDetectResult } from './interface';
 
 export const createMessage = (textEditor: vscode.TextEditor | undefined) => {
   if (!textEditor) {
@@ -15,9 +16,9 @@ export const createMessage = (textEditor: vscode.TextEditor | undefined) => {
 export const detectChineseWordsinWorkspace = (collection: vscode.DiagnosticCollection, project: vscode.WorkspaceFolder) => {
   getWorkspaceConfig();
   const projectDocuments = vscode.workspace.textDocuments.filter(doc => doc.fileName.includes(project.uri.fsPath));
-  console.log(projectDocuments[0]);
+  console.log(projectDocuments);
   const visibleDocuments = vscode.window.visibleTextEditors.map((editor) => editor.document);
-  createResultDiagnosticCollection(collection, visibleDocuments);
+  createResultDiagnosticCollection(collection, [...projectDocuments, ...visibleDocuments]);
 };
 
 const getWorkspaceConfig = () => {
@@ -30,7 +31,6 @@ const getWorkspaceConfig = () => {
 
 
 const createResultDiagnosticCollection = (collection: vscode.DiagnosticCollection, documents: vscode.TextDocument[]) => {
-
   documents.forEach((document) => {
     collection.set(document.uri, getDocumentDiagnostic(document));
   });

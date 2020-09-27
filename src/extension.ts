@@ -81,11 +81,13 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   let _run = vscode.commands.registerCommand('charset-detector.detectWorkspace', () => {
+
     const projects = vscode.workspace.workspaceFolders;
     if (!projects) {
       vscode.window.showInformationMessage('No file found.');
       return;
     }
+
     collections.clear();
     if (projects.length > 1) {
       vscode.window.showQuickPick(projects.map((p) => p.name)).then((name) => {
@@ -97,7 +99,7 @@ export function activate(context: vscode.ExtensionContext) {
     } else {
       detectChineseWordsinWorkspace(collections, projects[0]);
     }
-    console.log(projects);
+
   });
 
   context.subscriptions.push(_enable);
