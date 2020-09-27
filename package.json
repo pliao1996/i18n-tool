@@ -11,7 +11,8 @@
 	],
 	"activationEvents": [
 		"onCommand:charset-detector.enableHighlight",
-		"onCommand:charset-detector.enableWorkspaceDiagnostics"
+		"onCommand:charset-detector.enableWorkspaceDiagnostics",
+		"onCommand:charset-detector.createLocaleMessage"
 	],
 	"main": "./out/extension.js",
 	"contributes": {

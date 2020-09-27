@@ -16,18 +16,22 @@ export const createMessage = () => {
     return;
   }
   const selectedRange = new vscode.Range(textEditor.selection.start, textEditor.selection.end);
+  const anchor = textEditor.selection.anchor;
+  const active = textEditor.selection.active;
   const originText = textEditor.document.getText(selectedRange);
   const config = getWorkspaceConfig();
 
+  // TODO: create or re-write translation files
   vscode.window.showInputBox({ prompt: 'type message id above' }).then((id) => {
-    if (!textEditor.selection.isEmpty) {
-      textEditor.edit((editBuilder) => editBuilder.delete(selectedRange));
+    if (textEditor.selection.isEmpty) {
+      textEditor.edit((editBuilder) => editBuilder.insert(anchor, `\"${id}\"`));
+    } else {
+      textEditor.edit((editBuilder) => { editBuilder.replace(textEditor.selection, `\"${id}\"`); });
     }
-    textEditor.edit((editBuilder) => editBuilder.insert(textEditor.selection.active, `\"${id}\"`));
   });
 };
 
-//
+// TODO: textDocuments doesn't all files
 export const detectChineseWordsinWorkspace = (collection: vscode.DiagnosticCollection, project: vscode.WorkspaceFolder) => {
   const projectDocuments = vscode.workspace.textDocuments.filter(doc => doc.fileName.includes(project.uri.fsPath));
   const visibleDocuments = vscode.window.visibleTextEditors.map((editor) => editor.document);
