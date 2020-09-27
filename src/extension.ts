@@ -1,7 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { clearDecorations, detectChineseWordsinTextEditor, detectChineseWordsinWorkspace } from './task';
+import { clearDecorations, createMessage, detectChineseWordsinTextEditor, detectChineseWordsinWorkspace } from './task';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -19,6 +19,7 @@ export function activate(context: vscode.ExtensionContext) {
   const collections = vscode.languages.createDiagnosticCollection('Detector');
 
   const clearDiagnosticCollection = () => {
+    console.log('clear DiagnosticCollection');
     collections.clear();
   };
 
@@ -66,7 +67,7 @@ export function activate(context: vscode.ExtensionContext) {
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
-  let _enable__highlight = vscode.commands.registerCommand('charset-detector.enableHightlight', () => {
+  let _enable__highlight = vscode.commands.registerCommand('charset-detector.enableHighlight', () => {
     // The code you place here will be executed every time your command is executed
 
     if (_disableHighlight) {
@@ -77,7 +78,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   });
 
-  let _disable__highlight = vscode.commands.registerCommand('charset-detector.enableWorkspaceDiagnostics', () => {
+  let _disable__highlight = vscode.commands.registerCommand('charset-detector.disableHighlight', () => {
     if (!_disableHighlight) {
       _deativate();
     }
@@ -85,12 +86,12 @@ export function activate(context: vscode.ExtensionContext) {
 
 
   // will watch the workspace and show results in [PROBLEMS] panel
-  let _enable__diagnostics = vscode.commands.registerCommand('charset-detector.detectWorkspace', () => {
+  let _enable__diagnostics = vscode.commands.registerCommand('charset-detector.enableWorkspaceDiagnostics', () => {
 
     if (!_disableDiagnostics) {
       return;
     }
-
+    _disableDiagnostics = false;
     const projects = vscode.workspace.workspaceFolders;
     if (!projects) {
       vscode.window.showInformationMessage('No file found.');
@@ -107,7 +108,10 @@ export function activate(context: vscode.ExtensionContext) {
       });
     }
     detectChineseWordsinWorkspace(collections, _project);
+
+    //
     _watchTextEditorSave__diagnostics = watchTextEditorSave(() => detectChineseWordsinWorkspace(collections, _project));
+    context.subscriptions.push(_watchTextEditorSave__diagnostics);
 
   });
 
@@ -115,11 +119,14 @@ export function activate(context: vscode.ExtensionContext) {
     if (_disableDiagnostics) {
       return;
     }
+    _disableDiagnostics = true;
     _watchTextEditorSave__diagnostics.dispose();
     clearDiagnosticCollection();
   });
 
-  let _createMessage = vscode.commands.registerCommand('charset-detector.createLocaleMessage', () => { });
+  let _createMessage = vscode.commands.registerCommand('charset-detector.createLocaleMessage', () => {
+    createMessage();
+  });
 
   context.subscriptions.push(_enable__highlight);
   context.subscriptions.push(_disable__highlight);

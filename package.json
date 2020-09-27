@@ -10,17 +10,18 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:charset-detector.enableHightlight"
+		"onCommand:charset-detector.enableHighlight",
+		"onCommand:charset-detector.enableWorkspaceDiagnostics"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "charset-detector.enableHightlight",
+				"command": "charset-detector.enableHighlight",
 				"title": "Highlight lines with Chinese words"
 			},
 			{
-				"command": "charset-detector.disableHightlight",
+				"command": "charset-detector.disableHighlight",
 				"title": "Disable highlight of lines with Chinese words"
 			},
 			{
@@ -30,17 +31,21 @@
 			{
 				"command": "charset-detector.disableWorkspaceDiagnostics",
 				"title": "Disable workspace detection"
+			},
+			{
+				"command": "charset-detector.createLocaleMessage",
+				"title": "Disable workspace detection"
 			}
 		],
 		"keybindings": [
 			{
-				"command": "charset-detector.enableHightlight",
+				"command": "charset-detector.enableHighlight",
 				"key": "ctrl+shift+f",
 				"mac": "cmd+shift+f",
 				"when": "editorTextFocus"
 			},
 			{
-				"command": "charset-detector.disableHightlight",
+				"command": "charset-detector.disableHighlight",
 				"key": "ctrl+shift+e",
 				"mac": "cmd+shift+e",
 				"when": "editorTextFocus"

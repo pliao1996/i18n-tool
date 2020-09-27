@@ -3,15 +3,28 @@ import { textEditorDecorationTypeHighlight } from './config';
 import { CHINESE_WORDS_REGEX } from './constants';
 import { DocumentDetectResult } from './interface';
 
-export const createMessage = (textEditor: vscode.TextEditor | undefined) => {
+export const createMessage = () => {
+  const textEditor = vscode.window.activeTextEditor;
   if (!textEditor) {
     // Display a message box to the user
-    vscode.window.showInformationMessage('There is no open file!');
+    vscode.window.showInformationMessage('You should open a file :)');
     return;
   }
+
+  if (!textEditor.selection) {
+    vscode.window.showInformationMessage('You should select a position to insert message :)');
+    return;
+  }
+  const selectedRange = new vscode.Range(textEditor.selection.start, textEditor.selection.end);
+  const originText = textEditor.document.getText(selectedRange);
   const config = getWorkspaceConfig();
 
-
+  vscode.window.showInputBox({ prompt: 'type message id above' }).then((id) => {
+    if (!textEditor.selection.isEmpty) {
+      textEditor.edit((editBuilder) => editBuilder.delete(selectedRange));
+    }
+    textEditor.edit((editBuilder) => editBuilder.insert(textEditor.selection.active, `\"${id}\"`));
+  });
 };
 
 //
