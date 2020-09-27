@@ -24,8 +24,12 @@
 				"title": "Disable highlight of lines with Chinese words"
 			},
 			{
-				"command": "charset-detector.detectWorkspace",
-				"title": "Find Chinese words in workspace"
+				"command": "charset-detector.enableWorkspaceDiagnostics",
+				"title": "Enable workspace detection"
+			},
+			{
+				"command": "charset-detector.disableWorkspaceDiagnostics",
+				"title": "Disable workspace detection"
 			}
 		],
 		"keybindings": [
@@ -39,6 +43,12 @@
 				"command": "charset-detector.disableHightlight",
 				"key": "ctrl+shift+e",
 				"mac": "cmd+shift+e",
+				"when": "editorTextFocus"
+			},
+			{
+				"command": "charset-detector.createLocaleMessage",
+				"key": "ctrl+shift+c",
+				"mac": "cmd+shift+c",
 				"when": "editorTextFocus"
 			}
 		],

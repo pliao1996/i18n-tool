@@ -11,45 +11,48 @@ export function activate(context: vscode.ExtensionContext) {
   // This line of code will only be executed once when your extension is activated
   console.log('Congratulations, your extension "charset-detector" is now active!');
 
-  let disable = true;
-  let _watch: vscode.Disposable[];
-  const collections = vscode.languages.createDiagnosticCollection('Detector');;
-  // generate a disposable to watch text change
-  const watch = () => {
-    return [
-      vscode.workspace.onDidChangeTextDocument(() => {
-        detectChineseWordsinTextEditor(vscode.window.activeTextEditor);
-      }),
-      vscode.window.onDidChangeActiveTextEditor(() => {
-        detectChineseWordsinTextEditor(vscode.window.activeTextEditor);
-      }),
-    ];
+  let _disableHighlight = true;
+  let _disableDiagnostics = true;
+  let _watchTextEditorSave__highlight: vscode.Disposable;
+  let _watchTextEditorChange__highlight: vscode.Disposable;
+  let _watchTextEditorSave__diagnostics: vscode.Disposable;
+  const collections = vscode.languages.createDiagnosticCollection('Detector');
+
+  const clearDiagnosticCollection = () => {
+    collections.clear();
   };
+
+  // generate a SaveTextDocument Event listener
+  const watchTextEditorSave = (callBack: (e: vscode.TextDocument) => any) => {
+    return vscode.workspace.onDidSaveTextDocument(callBack);
+  };
+
+  const watchTextEditorChange = (callBack: (e: vscode.TextEditor | undefined) => any) => {
+    return vscode.window.onDidChangeActiveTextEditor(callBack);
+  };
+
 
   // activate extension 
-  const activate = () => {
+  const _activate = () => {
 
     // new a listener and subscribe it 
-    _watch = watch();
-    context.subscriptions.push(..._watch);
-    disable = false;
+    _watchTextEditorSave__highlight = watchTextEditorSave(detectChineseWordsinTextEditor);
+    context.subscriptions.push(_watchTextEditorSave__highlight);
+    _watchTextEditorChange__highlight = watchTextEditorChange(detectChineseWordsinTextEditor);
+    context.subscriptions.push(_watchTextEditorChange__highlight);
 
-    const activeTextEditor = vscode.window.activeTextEditor;
-    if (!activeTextEditor) {
-      // Display a message box to the user
-      vscode.window.showInformationMessage('There is no open file!');
-      return;
-    }
-    // 
-    detectChineseWordsinTextEditor(vscode.window.activeTextEditor);
+    _disableHighlight = false;
+    detectChineseWordsinTextEditor();
   };
 
+
   // deativate extension
-  const deativate = () => {
+  const _deativate = () => {
 
     // unsubscribe the listener
-    _watch.forEach((watch) => watch.dispose());
-    disable = true;
+    _watchTextEditorSave__highlight.dispose();
+    _watchTextEditorChange__highlight.dispose();
+    _disableHighlight = true;
 
     //
     const activeTextEditor = vscode.window.activeTextEditor;
@@ -63,24 +66,30 @@ export function activate(context: vscode.ExtensionContext) {
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
-  let _enable = vscode.commands.registerCommand('charset-detector.enableHightlight', () => {
+  let _enable__highlight = vscode.commands.registerCommand('charset-detector.enableHightlight', () => {
     // The code you place here will be executed every time your command is executed
 
-    if (disable) {
-      activate();
+    if (_disableHighlight) {
+      _activate();
     } else {
-      deativate();
+      _deativate();
     }
 
   });
 
-  let _disable = vscode.commands.registerCommand('charset-detector.disableHightlight', () => {
-    if (!disable) {
-      deativate();
+  let _disable__highlight = vscode.commands.registerCommand('charset-detector.enableWorkspaceDiagnostics', () => {
+    if (!_disableHighlight) {
+      _deativate();
     }
   });
 
-  let _run = vscode.commands.registerCommand('charset-detector.detectWorkspace', () => {
+
+  // will watch the workspace and show results in [PROBLEMS] panel
+  let _enable__diagnostics = vscode.commands.registerCommand('charset-detector.detectWorkspace', () => {
+
+    if (!_disableDiagnostics) {
+      return;
+    }
 
     const projects = vscode.workspace.workspaceFolders;
     if (!projects) {
@@ -88,23 +97,35 @@ export function activate(context: vscode.ExtensionContext) {
       return;
     }
 
-    collections.clear();
+    // 
+    let _project = projects[0];
     if (projects.length > 1) {
       vscode.window.showQuickPick(projects.map((p) => p.name)).then((name) => {
         if (name) {
-          const project = projects.find((p) => p.name === name);
-          detectChineseWordsinWorkspace(collections, project!);
+          _project = (projects.find((p) => p.name === name))!;
         }
       });
-    } else {
-      detectChineseWordsinWorkspace(collections, projects[0]);
     }
+    detectChineseWordsinWorkspace(collections, _project);
+    _watchTextEditorSave__diagnostics = watchTextEditorSave(() => detectChineseWordsinWorkspace(collections, _project));
 
   });
 
-  context.subscriptions.push(_enable);
-  context.subscriptions.push(_disable);
-  context.subscriptions.push(_run);
+  let _disable__diagnostics = vscode.commands.registerCommand('charset-detector.disableWorkspaceDiagnostics', () => {
+    if (_disableDiagnostics) {
+      return;
+    }
+    _watchTextEditorSave__diagnostics.dispose();
+    clearDiagnosticCollection();
+  });
+
+  let _createMessage = vscode.commands.registerCommand('charset-detector.createLocaleMessage', () => { });
+
+  context.subscriptions.push(_enable__highlight);
+  context.subscriptions.push(_disable__highlight);
+  context.subscriptions.push(_enable__diagnostics);
+  context.subscriptions.push(_disable__diagnostics);
+  context.subscriptions.push(_createMessage);
 }
 
 // this method is called when your extension is deactivated

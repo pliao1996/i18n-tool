@@ -9,18 +9,20 @@ export const createMessage = (textEditor: vscode.TextEditor | undefined) => {
     vscode.window.showInformationMessage('There is no open file!');
     return;
   }
+  const config = getWorkspaceConfig();
 
 
 };
 
+//
 export const detectChineseWordsinWorkspace = (collection: vscode.DiagnosticCollection, project: vscode.WorkspaceFolder) => {
-  getWorkspaceConfig();
   const projectDocuments = vscode.workspace.textDocuments.filter(doc => doc.fileName.includes(project.uri.fsPath));
-  console.log(projectDocuments);
   const visibleDocuments = vscode.window.visibleTextEditors.map((editor) => editor.document);
-  createResultDiagnosticCollection(collection, [...projectDocuments, ...visibleDocuments]);
+  addDocumentsDiagnostictoCollection(collection, [...projectDocuments, ...visibleDocuments]);
 };
 
+
+// 
 const getWorkspaceConfig = () => {
   const extensions = vscode.workspace.getConfiguration('charset-detector.extensions');
   const ignore = vscode.workspace.getConfiguration('charset-detector.ignore');
@@ -30,14 +32,21 @@ const getWorkspaceConfig = () => {
 };
 
 
-const createResultDiagnosticCollection = (collection: vscode.DiagnosticCollection, documents: vscode.TextDocument[]) => {
+// add documents diagnostic to vscode diagnostic collection
+const addDocumentsDiagnostictoCollection = (collection: vscode.DiagnosticCollection, documents: vscode.TextDocument[]) => {
   documents.forEach((document) => {
     collection.set(document.uri, getDocumentDiagnostic(document));
   });
 };
 
+// get document diagnostics
 function getDocumentDiagnostic(document: vscode.TextDocument): vscode.Diagnostic[] {
   const results = detectDocumentWordsRangeandTexts(document);
+  return revertResultstoDiagnostic(results);
+}
+
+// revert results to diagnostics
+function revertResultstoDiagnostic(results: DocumentDetectResult): vscode.Diagnostic[] {
   return results.ranges.map((range: vscode.Range, index) => {
     return {
       message: results.texts[index],
@@ -48,6 +57,7 @@ function getDocumentDiagnostic(document: vscode.TextDocument): vscode.Diagnostic
   });
 }
 
+// find the ranges and texts of Chinese words in a document
 function detectDocumentWordsRangeandTexts(document: vscode.TextDocument): DocumentDetectResult {
   // check document line by line
   const lineCount = document.lineCount;
@@ -63,8 +73,9 @@ function detectDocumentWordsRangeandTexts(document: vscode.TextDocument): Docume
   return { ranges, texts };
 }
 
-
-export const detectChineseWordsinTextEditor = (textEditor: vscode.TextEditor | undefined) => {
+// highlight lines in active textEditor
+export const detectChineseWordsinTextEditor = () => {
+  const textEditor = vscode.window.activeTextEditor;
   if (!textEditor) {
     // Display a message box to the user
     vscode.window.showInformationMessage('There is no open file!');
