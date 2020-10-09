@@ -10,6 +10,14 @@
 		"Other"
   ],
   "publisher": "liaopei1996",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PeiLiao/i18n-tool.git"
+  },
+  "bugs": {
+    "email": "liaopei1996@outlook.com",
+    "url": "https://github.com/PeiLiao/i18n-tool/issues"
+  },
 	"activationEvents": [
 		"onCommand:i18n-tool.enableHighlight",
 		"onCommand:i18n-tool.enableWorkspaceDiagnostics",
