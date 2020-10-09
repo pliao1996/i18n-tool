@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import { textEditorDecorationTypeHighlight } from './config';
 import { CHINESE_WORDS_REGEX } from './constants';
 import { DocumentDetectResult, ExtensionConfig } from './interface';
-import { pathExists } from './utils';
+import { deepmerge, pathExists } from './utils';
 
 export const createMessage = () => {
   const textEditor = vscode.window.activeTextEditor;
@@ -22,6 +22,11 @@ export const createMessage = () => {
   const message = textEditor.document.getText(selectedRange);
 
   vscode.window.showInputBox({ prompt: 'type message id above' }).then((id) => {
+
+    if (!id) {
+      return;
+    }
+
     if (textEditor.selection.isEmpty) {
       textEditor.edit((editBuilder) => editBuilder.insert(anchor, `\"${id}\"`));
     } else {
@@ -37,21 +42,28 @@ export const createMessage = () => {
 const createMessageId = (messageId: string, message: string) => {
   const { en_path, zh_path } = getWorkspaceConfig();
   [en_path, zh_path].forEach((_path) => {
-    const messages = pathExists(_path) ? JSON.parse(fs.readFileSync(_path, 'utf-8')) : new Object;
-    const newMessages = insertMessage(messages, messageId.split('.'), messages);
-    fs.writeFileSync(zh_path, newMessages);
+    const messages = pathExists(_path) ? JSON.parse(fs.readFileSync(_path, 'utf-8')) : {};
+    const newMessages = insertMessage(messages, messageId.split('.'), message);
+    try {
+      fs.writeFileSync(_path, JSON.stringify(newMessages, null, 2));
+    } catch (error) {
+      console.log(error);
+      vscode.window.showInformationMessage(`no such file or directory, open ${_path}`);
+    }
   });
 };
 
 function insertMessage(messages: any, ids: string[], message: string) {
-  function newMessage(ids: string[], message: string | object): string | object {
-    if (ids) {
-      return newMessage(ids.slice(ids.length - 1), { [ids[ids.length - 1]]: message });
+  function createNewMessage(ids: string[], message: string | object): string | object {
+    if (ids.length > 0) {
+      return createNewMessage(ids.slice(0, ids.length - 1), { [ids[ids.length - 1]]: message });
     } else {
       return message;
     }
   }
-  return Object.assign(messages, newMessage(ids, message));
+  const newMessage = createNewMessage(ids, message);
+  console.log("insert:", newMessage);
+  return deepmerge(messages, newMessage);
 }
 
 // TODO: textDocuments aren't all files
@@ -64,10 +76,11 @@ export const detectChineseWordsinWorkspace = (collection: vscode.DiagnosticColle
 
 // 
 function getWorkspaceConfig(): ExtensionConfig {
-  const extensions = vscode.workspace.getConfiguration('i18n-tool')['i18n-tool.extensions'];
-  const ignore = vscode.workspace.getConfiguration('i18n-tool')['i18n-tool.ignore'];
-  const en_path = vscode.workspace.getConfiguration('i18n-tool')['i18n-tool.en-path'];
-  const zh_path = vscode.workspace.getConfiguration('i18n-tool')['i18n-tool.zh_path'];
+  const configuration = vscode.workspace.getConfiguration('i18n-tool');
+  const extensions = configuration['extensions'];
+  const ignore = configuration['ignore'];
+  const en_path = configuration['en-path'];
+  const zh_path = configuration['zh-path'];
   return { extensions, ignore, en_path, zh_path };
 };
 
@@ -92,7 +105,7 @@ function revertResultstoDiagnostic(results: DocumentDetectResult): vscode.Diagno
       message: results.texts[index],
       range: range,
       severity: vscode.DiagnosticSeverity.Information,
-      source: 'Detector'
+      source: 'i18n-tool'
     };
   });
 }

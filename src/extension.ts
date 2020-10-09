@@ -16,7 +16,7 @@ export function activate(context: vscode.ExtensionContext) {
   let _watchTextEditorSave__highlight: vscode.Disposable;
   let _watchTextEditorChange__highlight: vscode.Disposable;
   let _watchTextEditorSave__diagnostics: vscode.Disposable;
-  const collections = vscode.languages.createDiagnosticCollection('Detector');
+  const collections = vscode.languages.createDiagnosticCollection('i18n-tool');
 
   const clearDiagnosticCollection = () => {
     console.log('clear DiagnosticCollection');
