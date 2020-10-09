@@ -1,7 +1,9 @@
 import * as vscode from 'vscode';
+import * as fs from 'fs';
 import { textEditorDecorationTypeHighlight } from './config';
 import { CHINESE_WORDS_REGEX } from './constants';
-import { DocumentDetectResult } from './interface';
+import { DocumentDetectResult, ExtensionConfig } from './interface';
+import { pathExists } from './utils';
 
 export const createMessage = () => {
   const textEditor = vscode.window.activeTextEditor;
@@ -17,21 +19,42 @@ export const createMessage = () => {
   }
   const selectedRange = new vscode.Range(textEditor.selection.start, textEditor.selection.end);
   const anchor = textEditor.selection.anchor;
-  const active = textEditor.selection.active;
-  const originText = textEditor.document.getText(selectedRange);
-  const config = getWorkspaceConfig();
+  const message = textEditor.document.getText(selectedRange);
 
-  // TODO: create or re-write translation files
   vscode.window.showInputBox({ prompt: 'type message id above' }).then((id) => {
     if (textEditor.selection.isEmpty) {
       textEditor.edit((editBuilder) => editBuilder.insert(anchor, `\"${id}\"`));
     } else {
       textEditor.edit((editBuilder) => { editBuilder.replace(textEditor.selection, `\"${id}\"`); });
     }
+    if (id) {
+      createMessageId(id, message);
+    }
+  });
+
+};
+
+const createMessageId = (messageId: string, message: string) => {
+  const { en_path, zh_path } = getWorkspaceConfig();
+  [en_path, zh_path].forEach((_path) => {
+    const messages = pathExists(_path) ? JSON.parse(fs.readFileSync(_path, 'utf-8')) : new Object;
+    const newMessages = insertMessage(messages, messageId.split('.'), messages);
+    fs.writeFileSync(zh_path, newMessages);
   });
 };
 
-// TODO: textDocuments doesn't all files
+function insertMessage(messages: any, ids: string[], message: string) {
+  function newMessage(ids: string[], message: string | object): string | object {
+    if (ids) {
+      return newMessage(ids.slice(ids.length - 1), { [ids[ids.length - 1]]: message });
+    } else {
+      return message;
+    }
+  }
+  return Object.assign(messages, newMessage(ids, message));
+}
+
+// TODO: textDocuments aren't all files
 export const detectChineseWordsinWorkspace = (collection: vscode.DiagnosticCollection, project: vscode.WorkspaceFolder) => {
   const projectDocuments = vscode.workspace.textDocuments.filter(doc => doc.fileName.includes(project.uri.fsPath));
   const visibleDocuments = vscode.window.visibleTextEditors.map((editor) => editor.document);
@@ -40,12 +63,12 @@ export const detectChineseWordsinWorkspace = (collection: vscode.DiagnosticColle
 
 
 // 
-const getWorkspaceConfig = () => {
-  const extensions = vscode.workspace.getConfiguration('charset-detector.extensions');
-  const ignore = vscode.workspace.getConfiguration('charset-detector.ignore');
-  const en = vscode.workspace.getConfiguration('charset-detector.wordlib.en');
-  const zh = vscode.workspace.getConfiguration('charset-detector.wordlib.zh');
-  return { extensions, ignore, wordlib: { en, zh } };
+function getWorkspaceConfig(): ExtensionConfig {
+  const extensions = vscode.workspace.getConfiguration('i18n-tool')['i18n-tool.extensions'];
+  const ignore = vscode.workspace.getConfiguration('i18n-tool')['i18n-tool.ignore'];
+  const en_path = vscode.workspace.getConfiguration('i18n-tool')['i18n-tool.en-path'];
+  const zh_path = vscode.workspace.getConfiguration('i18n-tool')['i18n-tool.zh_path'];
+  return { extensions, ignore, en_path, zh_path };
 };
 
 

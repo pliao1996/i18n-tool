@@ -9,7 +9,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   // Use the console to output diagnostic information (console.log) and errors (console.error)
   // This line of code will only be executed once when your extension is activated
-  console.log('Congratulations, your extension "charset-detector" is now active!');
+  console.log('Congratulations, your extension "i18n-tool" is now active!');
 
   let _disableHighlight = true;
   let _disableDiagnostics = true;
@@ -67,7 +67,7 @@ export function activate(context: vscode.ExtensionContext) {
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
-  let _enable__highlight = vscode.commands.registerCommand('charset-detector.enableHighlight', () => {
+  let _enable__highlight = vscode.commands.registerCommand('i18n-tool.enableHighlight', () => {
     // The code you place here will be executed every time your command is executed
 
     if (_disableHighlight) {
@@ -78,7 +78,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   });
 
-  let _disable__highlight = vscode.commands.registerCommand('charset-detector.disableHighlight', () => {
+  let _disable__highlight = vscode.commands.registerCommand('i18n-tool.disableHighlight', () => {
     if (!_disableHighlight) {
       _deativate();
     }
@@ -86,7 +86,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 
   // will watch the workspace and show results in [PROBLEMS] panel
-  let _enable__diagnostics = vscode.commands.registerCommand('charset-detector.enableWorkspaceDiagnostics', () => {
+  let _enable__diagnostics = vscode.commands.registerCommand('i18n-tool.enableWorkspaceDiagnostics', () => {
 
     if (!_disableDiagnostics) {
       return;
@@ -115,7 +115,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   });
 
-  let _disable__diagnostics = vscode.commands.registerCommand('charset-detector.disableWorkspaceDiagnostics', () => {
+  let _disable__diagnostics = vscode.commands.registerCommand('i18n-tool.disableWorkspaceDiagnostics', () => {
     if (_disableDiagnostics) {
       return;
     }
@@ -124,7 +124,7 @@ export function activate(context: vscode.ExtensionContext) {
     clearDiagnosticCollection();
   });
 
-  let _createMessage = vscode.commands.registerCommand('charset-detector.createLocaleMessage', () => {
+  let _createMessage = vscode.commands.registerCommand('i18n-tool.createLocaleMessage', () => {
     createMessage();
   });
 

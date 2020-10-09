@@ -1,6 +1,6 @@
 {
-	"name": "charset-detector",
-	"displayName": "charset-detector",
+	"name": "i18n-tool",
+  "displayName": "i18n-tool",
 	"description": "",
 	"version": "0.0.1",
 	"engines": {
@@ -8,51 +8,52 @@
 	},
 	"categories": [
 		"Other"
-	],
+  ],
+  "publisher": "liaopei1996",
 	"activationEvents": [
-		"onCommand:charset-detector.enableHighlight",
-		"onCommand:charset-detector.enableWorkspaceDiagnostics",
-		"onCommand:charset-detector.createLocaleMessage"
+		"onCommand:i18n-tool.enableHighlight",
+		"onCommand:i18n-tool.enableWorkspaceDiagnostics",
+		"onCommand:i18n-tool.createLocaleMessage"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "charset-detector.enableHighlight",
+				"command": "i18n-tool.enableHighlight",
 				"title": "Highlight lines with Chinese words"
 			},
 			{
-				"command": "charset-detector.disableHighlight",
+				"command": "i18n-tool.disableHighlight",
 				"title": "Disable highlight of lines with Chinese words"
 			},
 			{
-				"command": "charset-detector.enableWorkspaceDiagnostics",
+				"command": "i18n-tool.enableWorkspaceDiagnostics",
 				"title": "Enable workspace detection"
 			},
 			{
-				"command": "charset-detector.disableWorkspaceDiagnostics",
+				"command": "i18n-tool.disableWorkspaceDiagnostics",
 				"title": "Disable workspace detection"
 			},
 			{
-				"command": "charset-detector.createLocaleMessage",
+				"command": "i18n-tool.createLocaleMessage",
 				"title": "Disable workspace detection"
 			}
 		],
 		"keybindings": [
 			{
-				"command": "charset-detector.enableHighlight",
+				"command": "i18n-tool.enableHighlight",
 				"key": "ctrl+shift+f",
 				"mac": "cmd+shift+f",
 				"when": "editorTextFocus"
 			},
 			{
-				"command": "charset-detector.disableHighlight",
+				"command": "i18n-tool.disableHighlight",
 				"key": "ctrl+shift+e",
 				"mac": "cmd+shift+e",
 				"when": "editorTextFocus"
 			},
 			{
-				"command": "charset-detector.createLocaleMessage",
+				"command": "i18n-tool.createLocaleMessage",
 				"key": "ctrl+shift+c",
 				"mac": "cmd+shift+c",
 				"when": "editorTextFocus"
@@ -60,32 +61,32 @@
 		],
 		"configuration": [
 			{
-				"title": "Charset-detector",
+				"title": "i18n-tool",
 				"properties": {
-					"charset-detector.directory": {
+					"i18n-tool.directory": {
 						"type": "string",
 						"default": "",
 						"description": "Choose a root directory to detect."
 					},
-					"charset-detector.extensions": {
+					"i18n-tool.extensions": {
 						"type": "array",
 						"default": [],
 						"description": "Specify which file to detect."
 					},
-					"charset-detector.ignore": {
+					"i18n-tool.ignore": {
 						"type": "array",
 						"default": [],
 						"description": "Files or folders to ignore."
 					},
-					"charset-detector.wordlib.en": {
+					"i18n-tool.en-path": {
 						"type": "string",
 						"default": "",
-						"description": ""
+						"description": "EN translation path."
 					},
-					"charset-detector.wordlib.zh": {
+					"i18n-tool.zh-path": {
 						"type": "string",
 						"default": "",
-						"description": ""
+						"description": "ZH translation path."
 					}
 				}
 			}
