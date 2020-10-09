@@ -8,11 +8,19 @@ Describe specific features of your extension including screenshots of your exten
 
 ### Highlight chinese words in text editor (ctrl+shift+F / ctrl+shift+E)
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+![highlight](README.assets/highlight.png)
+
 
 ### Show workspace detection results in [PROBLEMS]
 
+![diagnostics](README.assets/diagnostics.png)
+
+
 ### Create new message with id (ctrl+shift+C)
+
+![createMessage](README.assets/createMessage.png)
+
+![locale](README.assets/locale.png)
 
 ## Requirements
 
@@ -20,34 +28,27 @@ None.
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
 This extension contributes the following settings:
 
-- `myExtension.chinese`: enable/disable this extension
-- `myExtension.english`: set to `blah` to do something
+- `i18n-tool.chinese`: 中文文案文件
+- `i18n-tool.english`: 英文文案文件
+
+![setting](README.assets/setting.png)
 
 ## Known Issues
 
 Calling out known issues can help limit users opening duplicate issues against your extension.
 
+- 暂时无法扫描工作区未打开文件
+
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
+### 0.0.1
 
-### 1.0.0
+- 中文字符高亮显示、索引
 
-Initial release of ...
+- 创建新文案并更新到库
 
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
 
 ---
 
