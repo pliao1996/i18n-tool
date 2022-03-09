@@ -87,6 +87,11 @@
 						"default": [],
 						"description": "Files or folders to ignore."
 					},
+					"i18n-tool.replaceRegex": {
+						"type": "string",
+						"default": "",
+						"description": "example: intl.get('key').d('message')"
+					},
 					"i18n-tool.en-path": {
 						"type": "string",
 						"default": "",

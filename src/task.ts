@@ -27,10 +27,12 @@ export const createMessage = () => {
       return;
     }
 
+    const { replaceRegex } = getWorkspaceConfig();
+    const intlMessage = replaceRegex.replace('key', id).replace('message', message);
     if (textEditor.selection.isEmpty) {
-      textEditor.edit((editBuilder) => editBuilder.insert(anchor, `\"${id}\"`));
+      textEditor.edit((editBuilder) => editBuilder.insert(anchor, `{${intlMessage}}`));
     } else {
-      textEditor.edit((editBuilder) => { editBuilder.replace(textEditor.selection, `\"${id}\"`); });
+      textEditor.edit((editBuilder) => { editBuilder.replace(textEditor.selection, `{${intlMessage}}`); });
     }
     if (id) {
       createMessageId(id, message);
@@ -79,9 +81,11 @@ function getWorkspaceConfig(): ExtensionConfig {
   const configuration = vscode.workspace.getConfiguration('i18n-tool');
   const extensions = configuration['extensions'];
   const ignore = configuration['ignore'];
+  const replaceRegex = configuration['replaceRegex'];
   const en_path = configuration['en-path'];
   const zh_path = configuration['zh-path'];
-  return { extensions, ignore, en_path, zh_path };
+
+  return { extensions, ignore, en_path, zh_path, replaceRegex };
 };
 
 

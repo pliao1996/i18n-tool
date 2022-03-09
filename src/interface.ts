@@ -5,6 +5,7 @@ export interface ExtensionConfig {
   ignore: string[];
   zh_path: string;
   en_path: string;
+  replaceRegex: string;
 }
 
 export interface DocumentDetectResult {
