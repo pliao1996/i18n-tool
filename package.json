@@ -2,7 +2,7 @@
 	"name": "i18n-tool",
   "displayName": "i18n-tool",
 	"description": "",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"engines": {
 		"vscode": "^1.49.0"
 	},
